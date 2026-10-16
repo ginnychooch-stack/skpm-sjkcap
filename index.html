@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Evidens SKPM Kualiti @ Sekolah - SJKC ALOR PONGSU</title>
+
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#050505',
+              navy: '#0a1226',
+              deep: '#0f172a',
+              card: 'rgba(15, 23, 42, 0.72)',
+              border: 'rgba(59, 130, 246, 0.22)',
+              gold: '#fbbf24',
+              amber: '#f59e0b',
+              glow: 'rgba(245, 158, 11, 0.45)'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
+            inter: ['"Inter"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- jsPDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      background-color: #050505;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Ambient Animated Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+      animation: floatOrb 18s ease-in-out infinite alternate;
+    }
+    .orb-blue {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, #1d4ed8 0%, #0c2340 70%);
+      top: -120px;
+      left: -100px;
+    }
+    .orb-gold {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, #d97706 0%, #78350f 70%);
+      bottom: -100px;
+      right: -80px;
+      animation-delay: -7s;
+    }
+    .orb-cyan {
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, #0284c7 0%, transparent 70%);
+      top: 45%;
+      left: 40%;
+      opacity: 0.25;
+      animation-delay: -3s;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(45px, 60px) scale(1.08); }
+      100% { transform: translate(-30px, 90px) scale(0.95); }
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: rgba(13, 20, 38, 0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(59, 130, 246, 0.18);
+      box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.65), 0 0 15px rgba(30, 58, 138, 0.15);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Hover Amber Card Glow */
+    .interactive-card:hover {
+      transform: translateY(-4px) scale(1.018);
+      border-color: rgba(245, 158, 11, 0.7);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 28px rgba(245, 158, 11, 0.35);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: #050505; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+  </style>
+</head>
+<body class="relative flex flex-col justify-between selection:bg-amber-500 selection:text-black">
+
+  <div class="orb orb-blue"></div>
+  <div class="orb orb-gold"></div>
+  <div class="orb orb-cyan"></div>
+
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28">
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="glass-panel rounded-3xl p-5 sm:p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-5 border border-blue-500/25">
+      <div class="flex items-center gap-4 w-full md:w-auto">
+        <div class="relative group">
+          <div class="absolute -inset-1 bg-gradient-to-r from-amber-500 to-blue-600 rounded-2xl blur opacity-40 group-hover:opacity-80 transition duration-300"></div>
+          <img src="https://i.postimg.cc/VN2z2ZLg/whatsapp.jpg" 
+               alt="Logo SJKC ALOR PONGSU" 
+               class="relative w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl p-1 bg-slate-950/80 border border-amber-400/30">
+        </div>
+        <div>
+          <span class="inline-block px-2.5 py-0.5 text-xs font-semibold tracking-wider text-amber-400 bg-amber-400/10 rounded-full border border-amber-400/20 mb-1">
+            PORTAL RASMI EVIDENS
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
+            SJKC ALOR PONGSU
+          </h1>
+          <p class="text-sm font-medium tracking-wide text-slate-400">
+            SKPM KUALITI @ SEKOLAH <span class="text-amber-400 font-bold">(SK@S)</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="w-full md:w-auto flex md:flex-col items-center md:items-end justify-between border-t md:border-t-0 border-slate-800 pt-3 md:pt-0">
+        <div class="text-left md:text-right">
+          <p class="text-xs uppercase tracking-widest text-slate-400 font-semibold">Sistem Pengurusan</p>
+          <h2 class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 bg-clip-text text-transparent">
+            DASHBOARD EVIDENS
+          </h2>
+          <p class="text-xs text-blue-300/80 font-medium">SKPM Kualiti @ Sekolah</p>
+        </div>
+        <div class="flex items-center gap-2 mt-1 md:mt-2 bg-blue-950/60 border border-blue-500/30 px-3 py-1 rounded-full text-xs text-blue-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>Google Drive Cloud Active</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- PROFIL PENTADBIRAN -->
+      <aside class="lg:col-span-4 space-y-6">
+        <div class="glass-panel rounded-3xl p-6 relative overflow-hidden border-blue-500/20">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800/80 mb-6">
+            <div>
+              <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-users-viewfinder text-amber-400"></i>
+                Profil Pentadbiran
+              </h3>
+              <p class="text-xs text-slate-400">Barisan Kepimpinan Sekolah</p>
+            </div>
+            <span class="text-xs font-semibold px-2 py-1 bg-blue-900/40 text-blue-300 rounded border border-blue-700/40">SK@S</span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Guru Besar -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-amber-400/50 transition-all duration-300 flex items-center gap-4 group">
+              <div class="relative cursor-pointer shrink-0" onclick="openImageViewer('', 'LEE BOON KIM', 'Guru Besar')">
+                <div class="w-14 h-14 rounded-full ring-2 ring-amber-400/60 group-hover:ring-amber-400 overflow-hidden bg-slate-800 flex items-center justify-center transition shadow-lg">
+                  <img src="" alt="LEE BOON KIM" class="pentadbir-avatar w-full h-full object-cover hidden">
+                  <i class="fa-solid fa-user-tie text-xl text-amber-400/70 avatar-fallback"></i>
+                </div>
+                <div class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow group-hover:scale-110 transition">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <span class="text-[11px] font-bold text-amber-400 tracking-wider uppercase block">Guru Besar</span>
+                <h4 class="text-sm font-semibold text-white group-hover:text-amber-200 truncate transition">LEE BOON KIM</h4>
+                <p class="text-[11px] text-slate-400">Kepimpinan Utama</p>
+              </div>
+            </div>
+
+            <!-- PK Pentadbiran -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-amber-400/50 transition-all duration-300 flex items-center gap-4 group">
+              <div class="relative cursor-pointer shrink-0" onclick="openImageViewer('', 'TAN CHEE MING', 'PK Pentadbiran')">
+                <div class="w-14 h-14 rounded-full ring-2 ring-blue-500/50 group-hover:ring-amber-400 overflow-hidden bg-slate-800 flex items-center justify-center transition shadow-lg">
+                  <img src="" alt="TAN CHEE MING" class="pentadbir-avatar w-full h-full object-cover hidden">
+                  <i class="fa-solid fa-user-shield text-xl text-blue-400 avatar-fallback"></i>
+                </div>
+                <div class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow group-hover:scale-110 transition">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <span class="text-[11px] font-bold text-blue-400 tracking-wider uppercase block">PK Pentadbiran</span>
+                <h4 class="text-sm font-semibold text-white group-hover:text-amber-200 truncate transition">TAN CHEE MING</h4>
+                <p class="text-[11px] text-slate-400">Pengurusan Kurikulum & Pentadbiran</p>
+              </div>
+            </div>
+
+            <!-- PK HEM -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-amber-400/50 transition-all duration-300 flex items-center gap-4 group">
+              <div class="relative cursor-pointer shrink-0" onclick="openImageViewer('', 'NG SUK GHEE', 'PK Hal Ehwal Murid')">
+                <div class="w-14 h-14 rounded-full ring-2 ring-blue-500/50 group-hover:ring-amber-400 overflow-hidden bg-slate-800 flex items-center justify-center transition shadow-lg">
+                  <img src="" alt="NG SUK GHEE" class="pentadbir-avatar w-full h-full object-cover hidden">
+                  <i class="fa-solid fa-user-graduate text-xl text-blue-400 avatar-fallback"></i>
+                </div>
+                <div class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow group-hover:scale-110 transition">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <span class="text-[11px] font-bold text-blue-400 tracking-wider uppercase block">PK Hal Ehwal Murid</span>
+                <h4 class="text-sm font-semibold text-white group-hover:text-amber-200 truncate transition">NG SUK GHEE</h4>
+                <p class="text-[11px] text-slate-400">Pembangunan Sahsiah & Disiplin</p>
+              </div>
+            </div>
+
+            <!-- PK Kokurikulum -->
+            <div class="p-3.5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-amber-400/50 transition-all duration-300 flex items-center gap-4 group">
+              <div class="relative cursor-pointer shrink-0" onclick="openImageViewer('', 'NOR AISHAH BT ALI', 'PK Kokurikulum')">
+                <div class="w-14 h-14 rounded-full ring-2 ring-blue-500/50 group-hover:ring-amber-400 overflow-hidden bg-slate-800 flex items-center justify-center transition shadow-lg">
+                  <img src="" alt="NOR AISHAH BT ALI" class="pentadbir-avatar w-full h-full object-cover hidden">
+                  <i class="fa-solid fa-user-astronaut text-xl text-blue-400 avatar-fallback"></i>
+                </div>
+                <div class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow group-hover:scale-110 transition">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <span class="text-[11px] font-bold text-blue-400 tracking-wider uppercase block">PK Kokurikulum</span>
+                <h4 class="text-sm font-semibold text-white group-hover:text-amber-200 truncate transition">NOR AISHAH BT ALI</h4>
+                <p class="text-[11px] text-slate-400">Pengurusan Bakat & Sukan</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-5 border-t border-slate-800/80 text-center bg-gradient-to-r from-blue-950/40 via-amber-500/10 to-blue-950/40 p-4 rounded-2xl border border-amber-500/20">
+            <p class="text-xs uppercase tracking-widest text-slate-400 mb-1 font-semibold">Slogan Aspirasi</p>
+            <p class="text-sm font-bold italic tracking-wide text-amber-300">
+              “Evidens Sistematik, Standard Tepat”
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- SISTEM EVIDENS DIGITAL -->
+      <section class="lg:col-span-8 space-y-6">
+        <div class="glass-panel rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-blue-500/20">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></span>
+              <h2 class="text-xl sm:text-2xl font-extrabold text-white">Sistem Evidens Digital</h2>
+            </div>
+            <p class="text-sm text-slate-400">
+              Pilih standard untuk pengisian evidens dan muat naik fail terus ke Google Drive.
+            </p>
+          </div>
+          <div class="shrink-0 flex items-center gap-2 text-xs font-medium text-slate-300 bg-slate-900/80 px-3.5 py-2 rounded-xl border border-slate-700">
+            <i class="fa-solid fa-cloud-arrow-up text-amber-400"></i>
+            <span>Google Drive Direct Link</span>
+          </div>
+        </div>
+
+        <!-- Bento Grid: Standard 1 hingga 4 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          <!-- STANDARD 1 -->
+          <div onclick="openEvidenceModal('STANDARD 1', 'Kepimpinan', 'standard')" 
+               class="glass-panel interactive-card cursor-pointer rounded-3xl p-6 flex flex-col justify-between group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-900/40 text-blue-300 border border-blue-700/30 group-hover:border-amber-400/50 group-hover:text-amber-300 transition">
+                STD 1
+              </span>
+              <div class="w-12 h-12 rounded-2xl bg-blue-950/80 border border-blue-500/30 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                <i class="fa-solid fa-crown"></i>
+              </div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Standard 1</p>
+              <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition">Kepimpinan</h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2">Peranan pengetua/guru besar sebagai peneraju, pembimbing dan pendorong.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-amber-400 font-medium">
+              <span>Hantar Dokumen</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition duration-300"></i>
+            </div>
+          </div>
+
+          <!-- STANDARD 2 -->
+          <div onclick="openEvidenceModal('STANDARD 2', 'Pengurusan Organisasi', 'standard')" 
+               class="glass-panel interactive-card cursor-pointer rounded-3xl p-6 flex flex-col justify-between group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-900/40 text-blue-300 border border-blue-700/30 group-hover:border-amber-400/50 group-hover:text-amber-300 transition">
+                STD 2
+              </span>
+              <div class="w-12 h-12 rounded-2xl bg-blue-950/80 border border-blue-500/30 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                <i class="fa-solid fa-sitemap"></i>
+              </div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Standard 2</p>
+              <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition">Pengurusan Organisasi</h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2">Pengurusan sumber manusia, kewangan, fizikal, dan sumber pendidikan.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-amber-400 font-medium">
+              <span>Hantar Dokumen</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition duration-300"></i>
+            </div>
+          </div>
+
+          <!-- STANDARD 3.1 -->
+          <div onclick="openEvidenceModal('STANDARD 3.1', 'Pengurusan Kurikulum', 'standard')" 
+               class="glass-panel interactive-card cursor-pointer rounded-3xl p-6 flex flex-col justify-between group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-900/40 text-blue-300 border border-blue-700/30 group-hover:border-amber-400/50 group-hover:text-amber-300 transition">
+                STD 3.1
+              </span>
+              <div class="w-12 h-12 rounded-2xl bg-blue-950/80 border border-blue-500/30 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                <i class="fa-solid fa-book-bookmark"></i>
+              </div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Standard 3.1</p>
+              <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition">Pengurusan Kurikulum</h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2">Ketetapan, pelaksanaan panitia, penilaian prestasi kurikulum murid.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-amber-400 font-medium">
+              <span>Hantar Dokumen</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition duration-300"></i>
+            </div>
+          </div>
+
+          <!-- STANDARD 3.2 -->
+          <div onclick="openEvidenceModal('STANDARD 3.2', 'Pengurusan Kokurikulum', 'standard')" 
+               class="glass-panel interactive-card cursor-pointer rounded-3xl p-6 flex flex-col justify-between group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-900/40 text-blue-300 border border-blue-700/30 group-hover:border-amber-400/50 group-hover:text-amber-300 transition">
+                STD 3.2
+              </span>
+              <div class="w-12 h-12 rounded-2xl bg-blue-950/80 border border-blue-500/30 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                <i class="fa-solid fa-medal"></i>
+              </div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Standard 3.2</p>
+              <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition">Pengurusan Kokurikulum</h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2">Pengurusan kelab, sukan/permainan, unit beruniform dan pertandingan.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-amber-400 font-medium">
+              <span>Hantar Dokumen</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition duration-300"></i>
+            </div>
+          </div>
+
+          <!-- STANDARD 3.3 -->
+          <div onclick="openEvidenceModal('STANDARD 3.3', 'Pengurusan HEM', 'standard')" 
+               class="glass-panel interactive-card cursor-pointer rounded-3xl p-6 flex flex-col justify-between group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-900/40 text-blue-300 border border-blue-700/30 group-hover:border-amber-400/50 group-hover:text-amber-300 transition">
+                STD 3.3
+              </span>
+              <div class="w-12 h-12 rounded-2xl bg-blue-950/80 border border-blue-500/30 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                <i class="fa-solid fa-heart-pulse"></i>
+              </div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Standard 3.3</p>
+              <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition">Pengurusan HEM</h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2">Disiplin, keselamatan, kesihatan, bantuan dan sahsiah murid.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-amber-400 font-medium">
+              <span>Hantar Dokumen</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition duration-300"></i>
+            </div>
+          </div>
+
+          <!-- STANDARD 4 -->
+          <div onclick="openEvidenceModal('STANDARD 4', 'Pembelajaran dan Pemudahcaraan (PdPc)', 'standard')" 
+               class="glass-panel interactive-card cursor-pointer rounded-3xl p-6 flex flex-col justify-between group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-blue-900/40 text-blue-300 border border-blue-700/30 group-hover:border-amber-400/50 group-hover:text-amber-300 transition">
+                STD 4
+              </span>
+              <div class="w-12 h-12 rounded-2xl bg-blue-950/80 border border-blue-500/30 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-300 shadow-md">
+                <i class="fa-solid fa-chalkboard-user"></i>
+              </div>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Standard 4</p>
+              <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition">PdPc</h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2">Guru sebagai perancang, pengawal, pembimbing dan pendorong aktif.</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-amber-400 font-medium">
+              <span>Hantar Dokumen</span>
+              <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition duration-300"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- STANDARD 5: PENCAPAIAN KAMI -->
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden border-amber-500/30 bg-gradient-to-br from-slate-900/90 via-blue-950/50 to-slate-900/90 shadow-2xl">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold tracking-wider mb-2">
+                <i class="fa-solid fa-trophy"></i>
+                STANDARD 5
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                PENCAPAIAN KAMI
+              </h3>
+              <p class="text-sm text-slate-300 mt-1 max-w-xl">
+                Pengumpulan rekod kejayaan, anugerah dan pencapaian cemerlang peringkat Sekolah dan Guru untuk audit kualiti.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap sm:flex-nowrap gap-3.5">
+              <button onclick="openEvidenceModal('STANDARD 5', 'Pencapaian Sekolah', 'sekolah')" 
+                      class="flex-1 sm:flex-none px-7 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-extrabold tracking-wider hover:brightness-110 active:scale-95 transition-all duration-300 shadow-[0_0_20px_rgba(245,158,11,0.4)] flex items-center justify-center gap-2.5">
+                <i class="fa-solid fa-school text-base"></i>
+                <span>SEKOLAH</span>
+              </button>
+              <button onclick="openEvidenceModal('STANDARD 5', 'Pencapaian Guru', 'guru')" 
+                      class="flex-1 sm:flex-none px-7 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 hover:border-amber-400 font-extrabold tracking-wider active:scale-95 transition-all duration-300 shadow-lg flex items-center justify-center gap-2.5">
+                <i class="fa-solid fa-chalkboard-user text-base"></i>
+                <span>GURU</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- FOOTER CAPSULE -->
+  <footer class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-md">
+    <div class="backdrop-blur-xl bg-slate-950/80 border border-blue-500/30 px-5 py-2.5 rounded-full shadow-[0_10px_25px_rgba(0,0,0,0.8)] text-center flex items-center justify-between text-xs text-slate-400">
+      <span class="flex items-center gap-2 text-slate-300 font-medium">
+        <i class="fa-solid fa-shield-halved text-amber-400"></i>
+        SKPM Kualiti @ Sekolah
+      </span>
+      <span class="text-slate-600">|</span>
+      <span class="text-amber-400 font-semibold tracking-wide">SJKC ALOR PONGSU</span>
+    </div>
+  </footer>
+
+  <!-- MODAL PENGISIAN EVIDENS -->
+  <div id="evidenceModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-2xl bg-slate-950/95 border border-blue-500/30 rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(15,23,42,0.9)] my-8">
+      
+      <button onclick="closeEvidenceModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition border border-slate-700">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="mb-6 pr-8">
+        <span id="modalStandardBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/30 inline-block mb-2">
+          STANDARD 1
+        </span>
+        <h3 id="modalStandardTitle" class="text-2xl font-extrabold text-white">Kepimpinan</h3>
+        <p id="modalStandardDesc" class="text-xs text-slate-400 mt-1">Sila lengkapkan butiran evidens di bawah untuk simpanan arkib digital.</p>
+      </div>
+
+      <!-- BUTANG RUJUKAN KHAS (3.1 & 4) -->
+      <div id="referenceSection" class="hidden mb-6 p-4 rounded-2xl bg-blue-950/40 border border-blue-500/25 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-amber-400 flex items-center gap-2">
+            <i class="fa-solid fa-compass"></i>
+            Rujukan Evidens Digital (SEDANG MEMBANGUN)
+          </span>
+          <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">Pautan Pantas</span>
+        </div>
+        <div class="w-full h-24 rounded-xl overflow-hidden border border-slate-800 relative">
+          <img src="https://i.postimg.cc/4x5wFT48/sl-120320-38530-01.jpg" alt="Rujukan Banner" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-blue-950/30 backdrop-blur-[1px]"></div>
+        </div>
+        <div id="referenceBtnContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1"></div>
+      </div>
+
+      <!-- Form Pengisian Evidens -->
+      <form id="evidenceForm" onsubmit="handleFormSubmit(event)" class="space-y-5">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Nama Evidens <span class="text-amber-400">*</span>
+          </label>
+          <input type="text" id="evidenceNameInput" required
+                 class="w-full px-4 py-3 rounded-2xl bg-slate-900/90 border border-slate-700/80 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 outline-none text-white text-sm transition placeholder:text-slate-500"
+                 placeholder="Masukkan nama evidens...">
+          
+          <p id="evidenceGuideline" class="text-[11px] text-amber-300/80 mt-1.5 flex items-start gap-1.5 leading-relaxed">
+            <i class="fa-solid fa-circle-info mt-0.5 text-amber-400 shrink-0"></i>
+            <span>Tuliskan Nama Evidens diikuti tahun. Contoh: <strong>Minit Mesyuarat HEM Bil 1 2026</strong></span>
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Muat Naik Dokumen (PDF / JPG / PNG) <span class="text-amber-400">*</span>
+          </label>
+          
+          <input type="file" id="evidenceFileInput" accept=".pdf,image/png,image/jpeg,image/jpg" class="hidden" onchange="handleFileSelected(event)">
+
+          <div id="dropZone" onclick="triggerFileInput()"
+               class="border-2 border-dashed border-slate-700 hover:border-amber-400/70 bg-slate-900/40 hover:bg-slate-900/70 rounded-2xl p-6 text-center cursor-pointer transition-all duration-300 group">
+            
+            <div id="uploadPlaceholder" class="space-y-2">
+              <div class="w-12 h-12 rounded-full bg-slate-800 group-hover:bg-amber-400/20 text-slate-400 group-hover:text-amber-400 mx-auto flex items-center justify-center transition">
+                <i id="uploadIcon" class="fa-solid fa-cloud-arrow-up text-xl"></i>
+              </div>
+              <p class="text-sm font-semibold text-slate-300 group-hover:text-white transition">
+                Pilih fail dari peranti anda
+              </p>
+              <p class="text-xs text-slate-500">
+                Format: PDF, JPG, JPEG, PNG (Auto-konversi PDF A4 untuk imej)
+              </p>
+            </div>
+
+            <div id="fileSelectedDisplay" class="hidden space-y-1.5">
+              <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-2xl"></i>
+              </div>
+              <p id="selectedFileName" class="text-sm font-bold text-amber-400 break-all px-4">
+                nama-fail.pdf
+              </p>
+              <p id="fileStatusNote" class="text-[11px] text-slate-400">
+                Klik semula jika ingin menukar fail
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="submitBtn"
+                class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-extrabold tracking-wider hover:brightness-110 active:scale-[0.99] transition duration-300 shadow-[0_0_25px_rgba(245,158,11,0.35)] flex items-center justify-center gap-2">
+          <i class="fa-brands fa-google-drive text-lg"></i>
+          <span id="submitBtnText">HANTAR KE DRIVE</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 10. MODAL POPUP BERJAYA (DIPERBAIKI) ==================== -->
+  <div id="successModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="w-full max-w-md bg-slate-950 border border-emerald-500/40 rounded-3xl p-7 text-center shadow-[0_0_50px_rgba(16,185,129,0.3)] space-y-5 animate-in fade-in zoom-in duration-300">
+      <div class="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-400 mx-auto flex items-center justify-center text-emerald-400 text-4xl shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div class="space-y-2">
+        <div class="text-3xl font-extrabold text-white">✅</div>
+        <p class="text-base font-bold text-white">
+          Tahniah, evidens anda telah berjaya di hantar.
+        </p>
+        <p class="text-xs text-slate-400">
+          Terima kasih atas kerjasama anda.
+        </p>
+      </div>
+
+      <button onclick="closeSuccessModal()" 
+              class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold tracking-wider border border-slate-600 transition active:scale-95">
+        TUTUP
+      </button>
+    </div>
+  </div>
+
+  <!-- IMAGE VIEWER PENTADBIR -->
+  <div id="imageViewerModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onclick="closeImageViewer()">
+    <div class="relative max-w-sm sm:max-w-md w-full bg-slate-900 border border-blue-500/30 rounded-3xl p-6 text-center shadow-2xl" onclick="event.stopPropagation()">
+      <button onclick="closeImageViewer()" class="absolute top-4 right-4 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="w-48 h-48 sm:w-56 sm:h-56 mx-auto rounded-full overflow-hidden ring-4 ring-amber-400/80 mb-4 bg-slate-800 flex items-center justify-center shadow-[0_0_35px_rgba(245,158,11,0.35)]">
+        <img id="viewerImage" src="" alt="Pentadbir" class="w-full h-full object-cover hidden">
+        <i id="viewerPlaceholderIcon" class="fa-solid fa-user-tie text-6xl text-amber-400"></i>
+      </div>
+      <span id="viewerRole" class="text-xs font-bold text-amber-400 tracking-wider uppercase block">Jawatan</span>
+      <h3 id="viewerName" class="text-lg font-bold text-white mt-1">Nama Pegawai</h3>
+      <p class="text-xs text-slate-400 mt-2">SJKC ALOR PONGSU</p>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwTMxpwsELmkmJCk7wd30qE13zVmZ5TEx-AXbs5Q8bgY22pnSR1wmyykJ1fv12CvUj1/exec";
+
+    let selectedFile = null;
+    let currentStandardCode = '';
+    let currentCategory = 'standard';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.pentadbir-avatar').forEach(img => {
+        if (!img.getAttribute('src') || img.getAttribute('src').trim() === '') {
+          img.classList.add('hidden');
+          const fallback = img.nextElementSibling;
+          if (fallback) fallback.classList.remove('hidden');
+        } else {
+          img.classList.remove('hidden');
+          const fallback = img.nextElementSibling;
+          if (fallback) fallback.classList.add('hidden');
+        }
+      });
+    });
+
+    function openEvidenceModal(code, title, category = 'standard') {
+      currentStandardCode = code;
+      currentCategory = category;
+
+      const modal = document.getElementById('evidenceModal');
+      const badge = document.getElementById('modalStandardBadge');
+      const titleEl = document.getElementById('modalStandardTitle');
+      const descEl = document.getElementById('modalStandardDesc');
+      const nameInput = document.getElementById('evidenceNameInput');
+      const guideline = document.getElementById('evidenceGuideline');
+      const refSection = document.getElementById('referenceSection');
+      const refContainer = document.getElementById('referenceBtnContainer');
+
+      resetFileSelection();
+      nameInput.value = '';
+
+      badge.textContent = code;
+      titleEl.textContent = title;
+
+      if (category === 'sekolah') {
+        descEl.textContent = 'Rekod pengiktirafan dan pencapaian peringkat sekolah.';
+        nameInput.placeholder = 'Contoh: PERINGKAT DAERAH ANUGERAH PENCAPAIAN PRA SEKOLAH LUAR BANDAR 2025';
+        guideline.innerHTML = `
+          <i class="fa-solid fa-circle-info mt-0.5 text-amber-400 shrink-0"></i>
+          <span>Format: <strong>Peringkat, Nama Sijil/Anugerah, Tahun</strong><br>Contoh: <em>PERINGKAT DAERAH ANUGERAH PENCAPAIAN PRA SEKOLAH LUAR BANDAR 2025</em></span>
+        `;
+      } else if (category === 'guru') {
+        descEl.textContent = 'Rekod sumbangan, inovasi dan pencapaian warga pendidik.';
+        nameInput.placeholder = 'Contoh: PERINGKAT NEGERI INOVASI INSEC 2026 (SITI KHADIJAH MOHD ZAIN)';
+        guideline.innerHTML = `
+          <i class="fa-solid fa-circle-info mt-0.5 text-amber-400 shrink-0"></i>
+          <span>Format: <strong>Peringkat, Nama Sijil, Nama Guru</strong><br>Contoh: <em>PERINGKAT NEGERI INOVASI INSEC 2026 (SITI KHADIJAH MOHD ZAIN)</em></span>
+        `;
+      } else {
+        descEl.textContent = 'Sila lengkapkan butiran evidens di bawah untuk simpanan arkib digital.';
+        nameInput.placeholder = 'Contoh: Minit Mesyuarat HEM Bil 1 2026';
+        guideline.innerHTML = `
+          <i class="fa-solid fa-circle-info mt-0.5 text-amber-400 shrink-0"></i>
+          <span>Format: <strong>Tuliskan Nama Evidens diikuti tahun.</strong> Contoh: <em>Minit Mesyuarat HEM Bil 1 2026</em></span>
+        `;
+      }
+
+      if (code === 'STANDARD 3.1') {
+        refSection.classList.remove('hidden');
+        refContainer.innerHTML = `
+          <a href="#" onclick="event.preventDefault();" class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-semibold text-center border border-slate-700 transition block truncate">
+            <i class="fa-solid fa-folder-open mr-1"></i> Fail Digital Kurikulum
+          </a>
+          <a href="#" onclick="event.preventDefault();" class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-semibold text-center border border-slate-700 transition block truncate">
+            <i class="fa-solid fa-table-cells-large mr-1"></i> Dashboard Panitia
+          </a>
+          <a href="#" onclick="event.preventDefault();" class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-semibold text-center border border-slate-700 transition block truncate">
+            <i class="fa-solid fa-user-group mr-1"></i> Kurikulum Ibubapa
+          </a>
+        `;
+      } else if (code === 'STANDARD 4') {
+        refSection.classList.remove('hidden');
+        refContainer.innerHTML = `
+          <a href="#" onclick="event.preventDefault();" class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-semibold text-center border border-slate-700 transition block truncate">
+            <i class="fa-solid fa-chart-line mr-1"></i> Dashboard Pencerapan
+          </a>
+          <a href="#" onclick="event.preventDefault();" class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-semibold text-center border border-slate-700 transition block truncate">
+            <i class="fa-solid fa-file-signature mr-1"></i> RPH Pencerapan
+          </a>
+          <a href="#" onclick="event.preventDefault();" class="px-3 py-2 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-semibold text-center border border-slate-700 transition block truncate">
+            <i class="fa-solid fa-clipboard-check mr-1"></i> Pelaporan Pencerapan
+          </a>
+        `;
+      } else {
+        refSection.classList.add('hidden');
+        refContainer.innerHTML = '';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeEvidenceModal() {
+      document.getElementById('evidenceModal').classList.add('hidden');
+    }
+
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('evidenceModal');
+      if (e.target === modal) closeEvidenceModal();
+    });
+
+    function triggerFileInput() {
+      document.getElementById('evidenceFileInput').click();
+    }
+
+    function handleFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      selectedFile = file;
+
+      const placeholder = document.getElementById('uploadPlaceholder');
+      const fileDisplay = document.getElementById('fileSelectedDisplay');
+      const fileNameEl = document.getElementById('selectedFileName');
+      const noteEl = document.getElementById('fileStatusNote');
+
+      placeholder.classList.add('hidden');
+      fileDisplay.classList.remove('hidden');
+      fileNameEl.textContent = file.name;
+
+      if (file.type.startsWith('image/')) {
+        noteEl.innerHTML = `<span class="text-blue-400"><i class="fa-solid fa-file-pdf"></i> Imej dikesan: Akan ditukar automatik ke PDF A4</span>`;
+      } else {
+        noteEl.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check"></i> Dokumen PDF sedia dimuat naik</span>`;
+      }
+    }
+
+    function resetFileSelection() {
+      selectedFile = null;
+      document.getElementById('evidenceFileInput').value = '';
+      document.getElementById('uploadPlaceholder').classList.remove('hidden');
+      document.getElementById('fileSelectedDisplay').classList.add('hidden');
+      document.getElementById('submitBtnText').textContent = 'HANTAR KE DRIVE';
+      document.getElementById('submitBtn').disabled = false;
+    }
+
+    async function convertImageToPdfBlob(imageFile) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            try {
+              const { jsPDF } = window.jspdf;
+              const imgWidth = img.width;
+              const imgHeight = img.height;
+              const isLandscape = imgWidth > imgHeight;
+              const orientation = isLandscape ? 'landscape' : 'portrait';
+
+              const doc = new jsPDF({
+                orientation: orientation,
+                unit: 'mm',
+                format: 'a4'
+              });
+
+              const pageWidth = isLandscape ? 297 : 210;
+              const pageHeight = isLandscape ? 210 : 297;
+
+              const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+              const finalWidth = imgWidth * ratio;
+              const finalHeight = imgHeight * ratio;
+
+              const xPos = (pageWidth - finalWidth) / 2;
+              const yPos = (pageHeight - finalHeight) / 2;
+
+              doc.addImage(img, 'JPEG', xPos, yPos, finalWidth, finalHeight);
+              const pdfBlob = doc.output('blob');
+              resolve(pdfBlob);
+            } catch (err) {
+              reject(err);
+            }
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(imageFile);
+      });
+    }
+
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64Data = reader.result.split(',')[1];
+          resolve(base64Data);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const nameVal = document.getElementById('evidenceNameInput').value.trim();
+      const submitBtn = document.getElementById('submitBtn');
+      const submitBtnText = document.getElementById('submitBtnText');
+
+      if (!nameVal) {
+        alert("Sila masukkan Nama Evidens.");
+        return;
+      }
+      if (!selectedFile) {
+        alert("Sila pilih dokumen untuk dimuat naik.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+
+      try {
+        let pdfBlob;
+        if (selectedFile.type.startsWith('image/')) {
+          submitBtnText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> MENUKAR IMEJ KE PDF...`;
+          pdfBlob = await convertImageToPdfBlob(selectedFile);
+        } else {
+          pdfBlob = selectedFile;
+        }
+
+        submitBtnText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> MEMPROSES FAIL...`;
+        const base64Data = await blobToBase64(pdfBlob);
+
+        let targetKey = currentStandardCode;
+        if (currentStandardCode === 'STANDARD 5') {
+          targetKey = (currentCategory === 'guru') ? 'STANDARD 5_GURU' : 'STANDARD 5_SEKOLAH';
+        }
+
+        const payload = {
+          standardKey: targetKey,
+          evidenceName: nameVal,
+          fileName: nameVal + ".pdf",
+          fileBase64: base64Data
+        };
+
+        submitBtnText.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-bounce mr-2"></i> MEMUAT NAIK KE GOOGLE DRIVE...`;
+
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        if (result.status !== 'success') {
+          throw new Error(result.message || 'Gagal memuat naik fail.');
+        }
+
+        closeEvidenceModal();
+        openSuccessModal();
+
+      } catch (err) {
+        console.error(err);
+        alert("Ralat semasa muat naik: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtnText.textContent = 'HANTAR KE DRIVE';
+      }
+    }
+
+    function openSuccessModal() {
+      document.getElementById('successModal').classList.remove('hidden');
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('successModal').classList.add('hidden');
+    }
+
+    function openImageViewer(imgSrc, name, role) {
+      const viewer = document.getElementById('imageViewerModal');
+      const imgEl = document.getElementById('viewerImage');
+      const iconEl = document.getElementById('viewerPlaceholderIcon');
+      document.getElementById('viewerName').textContent = name;
+      document.getElementById('viewerRole').textContent = role;
+
+      if (imgSrc && imgSrc.trim() !== '') {
+        imgEl.src = imgSrc;
+        imgEl.classList.remove('hidden');
+        iconEl.classList.add('hidden');
+      } else {
+        imgEl.src = '';
+        imgEl.classList.add('hidden');
+        iconEl.classList.remove('hidden');
+      }
+      viewer.classList.remove('hidden');
+    }
+
+    function closeImageViewer() {
+      document.getElementById('imageViewerModal').classList.add('hidden');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeEvidenceModal();
+        closeSuccessModal();
+        closeImageViewer();
+      }
+    });
+  </script>
+</body>
+</html>
